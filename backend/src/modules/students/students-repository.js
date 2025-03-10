@@ -25,8 +25,11 @@ const findAllStudents = async (payload) => {
         queryParams.push(name);
     }
     if (className) {
-        query += ` AND t3.class_name = $${queryParams.length + 1}`;
-        queryParams.push(className);
+        const classId = parseInt(className);
+        if (!isNaN(classId)) {
+            query += ` AND t3.class_name IN (SELECT name FROM classes WHERE id = $${queryParams.length + 1})`;
+            queryParams.push(classId);
+        }
     }
     if (section) {
         query += ` AND t3.section_name = $${queryParams.length + 1}`;
